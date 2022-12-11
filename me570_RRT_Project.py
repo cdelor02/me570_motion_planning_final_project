@@ -197,17 +197,20 @@ def rrt_star(World,Start,End,Obstacles,Resolution,egoSize,nodes,nodePoses,tree,p
             if np.hypot(End[0]-newNode[0],End[1]-newNode[1]) <=  End[2]:                
                 final_nodes = final_nodes.append(num_nds)
             
+            
             #start RRT* neighbor consideration
             if closest != 0:
-                path = nx.shortest_path(tree,0,closest,weight='weight')                   
-                cost=edge_sum(tree.subgraph(path)) + closest_distance             
-                cheapest_node=closest #wire to nearest node if none closer
                 close_nodes = [] #neighborhood
                 for node_idx in range(len(nodePoses)): #assemble neighborhood
-                    if np.hypot(nodePoses[node_idx][0]-newNode[0],nodePoses[node_idx][1]-newNode[1])<s_radius and node_idx != num_nds:
-                        close_nodes.append(node_idx)
-                        
-                if close_nodes != []: #if neighbors exist, check for cheaper connection
+                    if node_idx==closest or node_idx==num_nds: #exclude nearest node and new node
+                        continue
+                    elif np.hypot(nodePoses[node_idx][0]-newNode[0],nodePoses[node_idx][1]-newNode[1])<s_radius:
+                            close_nodes.append(node_idx)      
+                #start evaluating lowest cost connection
+                path = nx.shortest_path(tree,0,closest,weight='weight')                   
+                cost=edge_sum(tree.subgraph(path)) + closest_distance #cost initialized to cost thru nearest node             
+                cheapest_node=closest #wire to nearest node if none found closer        
+                if close_nodes != []: #if neighbors exist, check for cheaper connection to newnode
                     for neighbor in close_nodes:
                         # tree.add_edge(neighbor,num_nds,weight=np.hypot(nodePoses[neighbor][0]-nodePoses[num_nds][0],
                         #                                        nodePoses[neighbor][1]-nodePoses[num_nds][1]))
@@ -218,21 +221,23 @@ def rrt_star(World,Start,End,Obstacles,Resolution,egoSize,nodes,nodePoses,tree,p
                             cheapest_node=neighbor
                             cost=new_cost
                         #tree.remove_edge(neighbor, num_nds)
-                tree.add_edge(cheapest_node,num_nds,weight=np.hypot(nodePoses[cheapest_node][0]-nodePoses[num_nds][0],
-                                                                    nodePoses[cheapest_node][1]-nodePoses[num_nds][1]))
+                tree.add_edge(cheapest_node,num_nds,weight=np.hypot(nodePoses[cheapest_node][0]-newNode[0],
+                                                                    nodePoses[cheapest_node][1]-newNode[1]))
+                #rewire step
                 if close_nodes != []:
                     for neighbor in close_nodes: 
-                        if neighbor !=cheapest_node:    
-                            path1 = nx.shortest_path(tree,0,num_nds,weight='weight')
-                            old_cost=edge_sum(tree.subgraph(path1))+np.hypot(nodePoses[neighbor][0]-newNode[0],
-                                                                          nodePoses[neighbor][1]-newNode[1])
-                            # tree.add_edge(neighbor,num_nds,weight=np.hypot(nodePoses[neighbor][0]-nodePoses[num_nds][0],
-                            #                                        nodePoses[neighbor][1]-nodePoses[num_nds][1]))   
-                            path2 = nx.shortest_path(tree,0,neighbor,weight='weight')
-                            new_cost=edge_sum(tree.subgraph(path2))
-                            if old_cost<new_cost:
-                                tree.remove_edge(path2[-2],neighbor)
-                                tree.add_edge(neighbor,num_nds,weight=new_cost)
+                        #if neighbor !=cheapest_node:    
+                        path1 = nx.shortest_path(tree,0,num_nds,weight='weight')
+                        new_cost=edge_sum(tree.subgraph(path1))+np.hypot(nodePoses[neighbor][0]-newNode[0],
+                                                                      nodePoses[neighbor][1]-newNode[1]) #cost of path to neighbor through new node 
+                        # tree.add_edge(neighbor,num_nds,weight=np.hypot(nodePoses[neighbor][0]-nodePoses[num_nds][0],
+                        #                                        nodePoses[neighbor][1]-nodePoses[num_nds][1]))   
+                        path2 = nx.shortest_path(tree,0,neighbor,weight='weight') 
+                        old_cost=edge_sum(tree.subgraph(path2)) #existing path to neighbor 
+                        if new_cost<old_cost: #if cheaper to connect to neighbor thru new node, connect and break neighbor's previous edge
+                            tree.remove_edge(path2[-2],neighbor)
+                            tree.add_edge(num_nds,neighbor,weight=np.hypot(nodePoses[neighbor][0]-newNode[0],
+                                                                                nodePoses[neighbor][1]-newNode[1]))
             else:
                 tree.add_edge(0,1,weight=np.hypot(nodePoses[0][0]-nodePoses[1][0],
                                                                     nodePoses[0][1]-nodePoses[1][1]))
@@ -276,7 +281,7 @@ def main():
     
     Resolution = 3    # Resolution of RRT
     egoSize    = 1.5  # Buffer space around obstacles
-    itr_max = 100 #steps for RRT*
+    itr_max = 1000 #steps for RRT*
     s_radius=3 #neighbor search radius
     
     # Initialize nodes, variables, and the tree
