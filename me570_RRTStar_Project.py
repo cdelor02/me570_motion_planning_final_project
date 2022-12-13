@@ -12,7 +12,7 @@ import math
 import time
 
 
-def graph(optn, tree, nodes, nodePoses, best_path, World, Start, End, Obstacles, extra_itrs):
+def graph(optn, tree, nodes, nodePoses, path_found, final_node, World, Start, End, Obstacles, extra_itrs):
 
     #path_x,path_y = path_formater(best_path,nodePoses) # TODO
 
@@ -21,7 +21,7 @@ def graph(optn, tree, nodes, nodePoses, best_path, World, Start, End, Obstacles,
 
         plt.subplot(211)
         nx.draw_networkx(tree, pos=nodes, with_labels=False, node_size=30)
-
+ 
         plt.subplot(212)
         endRegion =plt.Circle((End[0],End[1]),End[2],color='r')
         ax = plt.gca()
@@ -34,7 +34,11 @@ def graph(optn, tree, nodes, nodePoses, best_path, World, Start, End, Obstacles,
         #print("Time Elapsed: ",end-start)
         nx.draw_networkx_edges(tree, pos=nodes, ax=ax, node_size=30)
         plt.show()
-
+        
+        if path_found==True:
+            best_path=nx.shortest_path(tree,0,final_node,weight='weight')
+            path_x,path_y = path_formater(best_path,nodePoses)
+            plt.plot(path_x,path_y,'r')  
         endRegion =plt.Circle((End[0],End[1]),End[2],color='r')
         ax = plt.gca()
         plot_obs(ax,Obstacles)
@@ -43,7 +47,7 @@ def graph(optn, tree, nodes, nodePoses, best_path, World, Start, End, Obstacles,
         plt.axis("on")
         plt.axis("equal")
         end = time.time()
-        print("Time Elapsed: ",end-start)
+        #print("Time Elapsed: ",end-start)
         nx.draw_networkx_edges(tree, pos=nodes, ax=ax, node_size=30)
         plt.show()
 
@@ -89,7 +93,6 @@ def plot_obs(ax,Obstacles):
     for obs in Obstacles:
         ax.add_patch(obs)
 
-
 def path_formater(path,nodePoses):
     path_x = []
     path_y = []
@@ -100,8 +103,10 @@ def path_formater(path,nodePoses):
 
 
 def rrt_star(World,Start,End,Obstacles,Resolution,egoSize,nodes,nodePoses,tree,pathFound,itr,itr_max,s_radius):
-    final_nodes = []
-    num_nds     = 0
+    final_nodes = [] #list of all possible
+    final_node=None #lowest-cost endpoint
+    path_found=False
+    num_nds = 0
     while itr < itr_max:
 		#sample a random node
          newNode = [randrange(0,World[0]),randrange(0,World[1])]
@@ -158,7 +163,7 @@ def rrt_star(World,Start,End,Obstacles,Resolution,egoSize,nodes,nodePoses,tree,p
             # if goal is reached
             if np.hypot(End[0]-newNode[0],End[1]-newNode[1]) <=  End[2]:                
                 final_nodes.append(num_nds)
-            
+                path_found=True
             
             #start RRT* neighbor consideration
             if num_nds != 1:
@@ -203,10 +208,14 @@ def rrt_star(World,Start,End,Obstacles,Resolution,egoSize,nodes,nodePoses,tree,p
             else:
                 tree.add_edge(0,1,weight=np.hypot(nodePoses[0][0]-nodePoses[1][0],
                                                                     nodePoses[0][1]-nodePoses[1][1]))
-    #dist=float("inf")
-    #for test in final_nodes:
-        
-    return nodes, nodePoses, tree, final_nodes, num_nds 
+    #find final path
+    if path_found == True:
+        endcost=float("inf")
+        for point in final_nodes: #find cheapest path to goal
+            path = nx.shortest_path(tree,0,point,weight='weight')
+            if edge_sum(tree.subgraph(path)) < endcost:
+                final_node=point
+    return tree, nodes, nodePoses, path_found, final_node
                         
 
 def edge_sum(G):
@@ -238,11 +247,9 @@ def main():
                obstacle_coords[2][1]-obstacle_coords[2][0], obstacle_coords[2][3]-obstacle_coords[2][2]),
     Circle((30, 5), 3)]
 
-    
-    
     Resolution = 3    # Resolution for node addition step
     egoSize    = 1.5  # Buffer space around obstacles
-    itr_max    = 1000 # Steps for RRT*
+    itr_max    = 3000 # Steps for RRT*
     s_radius   = 3    # Neighbor search radius
     
     # Initialize nodes, variables, and the tree
@@ -253,16 +260,14 @@ def main():
     nodePoses.append(Start)
     tree      = nx.Graph()
     itr       = 0
-    pathFound = False # TODO
+    pathFound = False # 
 
-    nodes,nodePoses,tree,final_node,num_nds = rrt_star(World, Start, End, Obstacles, Resolution, egoSize,
+    tree,nodes,nodePoses,path_found,final_node = rrt_star(World, Start, End, Obstacles, Resolution, egoSize,
                                                        nodes, nodePoses, tree, pathFound, itr, itr_max, s_radius)
-
-    best_path = None # TODO
 
     # "subf" will make it plot a figure with two subfigures: the tree, and then the tree in the environment
     # any other string will make it plot a figure with just the environment and the tree in it
-    graph("subf", tree, nodes, nodePoses, best_path, World, Start, End, Obstacles, itr_max)
+    graph("subf", tree, nodes, nodePoses, path_found, final_node, World, Start, End, Obstacles, itr_max)
 
 
 
