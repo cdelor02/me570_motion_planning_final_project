@@ -24,4 +24,4 @@ Based off of RRT, but differs in two key ways.
 
 These two added features enable RRT* to converge faster on an optimal solution, as well as refine paths that are already found.
 
-![rrt* path planning algorithm run on table environment](RRTstar_25000itrs_Iso2.png "3D RRT*" width="250" height="250")
+![rrt* path planning algorithm run on table environment](RRTstar_25000itrs_Iso2.png "3D RRT*") {width="50%"}
