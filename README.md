@@ -17,13 +17,14 @@ Random points are found in the configuration space, and are connected to their n
 
 ### RRT*:
 
-RRT, but differs in that it:
+Based off of RRT, but differs in two key ways.
   
 - Connects new nodes to the nearest neighbor with the lowest cost
 - If the cost would be reduced by restructuring the tree, the tree is "rewired" to reduce that local cost
 
 These two added features enable RRT* to converge faster on an optimal solution, as well as refine paths that are already found.
 
+![rrt* path planning algorithm run on table environment](RRTstar_25000itrs_Iso2.png "3D RRT*")
 
 
 ### Required dependencies:
