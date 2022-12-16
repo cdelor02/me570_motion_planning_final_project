@@ -34,7 +34,6 @@ These two added features enable RRT* to converge faster on an optimal solution, 
 - NumPy
 - NetworkX
 
-
 #### MATLAB:
 - UAV Toolbox
 - Simulink
@@ -52,5 +51,12 @@ The pipeline for generating a path based on an environment and bringing it into 
 - You can visualize the path in the environment using Matplotlib if you use the `graph()` function, also included in the algorithm files.
 4. The path is saved to a `.txt` file as three columns: x, y, z.
 5. Open MATLAB and ensure you are in the same directory containing the path files.
-6. Open and run `UAVScenarioTutorialExample-CarterAdamCharlie.mlx`, a program based on a live script from the MATLAB UAV Toolbox. 
+
+To run the 2D simulation:
+6. Open and run `UAVScenarioTutorialExampleCharlie.mlx`, a program based on a live script from the MATLAB UAV Toolbox. 
 7. This script will load the previous path data as the waypoints for the simulation, as well as the obstacle coordinates, and create and run a simulation of a quadcopter moving from the start and end positions along the given path. 
+
+To run the 3D simulation:
+8. Open and run `UAVScenarioTutorialExampleCharlie3D.mlx`.
+
+
