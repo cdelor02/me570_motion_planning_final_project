@@ -4,6 +4,7 @@
 
 #### Authors: Carter Berlind, Adam Rozman, Charles DeLorey
 
+_You can read our writeup [here](https://github.com/cdelor02/me570_motion_planning_final_project/blob/main/ME570_final_proj_writeup.pdf)_.
 
 GitHub repository for our final project for ME570: Robot Motion Planning. Our novelty consists of an implementation of the Rapidly exploring Random Trees (RRT) algorithm, more specifically the RRT* algorithm, in 2D and in 3D. RRT and RRT* are explained below. 
 
