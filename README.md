@@ -47,7 +47,7 @@ Each file should be executable individually, with a representative example conta
 
 The pipeline for generating a path based on an environment and bringing it into MATLAB for simulation is as follows:
 
-1. Import the corresponding path planning functions from the file you are interested in. There is 
+1. Import the corresponding path planning functions from the file you are interested in. These files can be found in the `scripts` directory: 
 - `me570_2D_RRT_Project.py`
 - `me570_2D_RRTStar_Project.py`
 - `me570_3D_RRT_Project.py`
@@ -59,10 +59,12 @@ The pipeline for generating a path based on an environment and bringing it into 
 
 
 #### To run the simulations:
-1. Open and run `UAV-RRT-2D.mlx` or `UAV-RRT-3D.mlx`a program based on a live script from the MATLAB UAV Toolbox. 
+1. Open the `scripts` directory and run `UAV-RRT-2D.mlx` or `UAV-RRT-3D.mlx`a program based on a live script from the MATLAB UAV Toolbox. 
 2. The script will load the path data as the waypoints for the simulation, as well as the obstacle coordinates, and create and run a simulation of a quadcopter moving from the start and end positions along the given path. 
 
 
 
+
+![3D rrt* path planning algorithm run on table environment 2](3D_RRTstar_figures/3drrt_sim_example.png "another 3D RRT*")
 
 
