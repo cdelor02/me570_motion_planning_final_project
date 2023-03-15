@@ -1,11 +1,11 @@
-# Robot Motion Planning Final Project
+# Rapidly-exploring Random Trees for UAVs in an Urban Environment
 
-#### Title: Rapidly-exploring Random Trees for UAVs in an Urban Environment
+### Robot Motion Planning Final Project
 
 #### Authors: Carter Berlind, Adam Rozman, Charles DeLorey
 
 
-GitHub repository for our final project for ME570, Robot Motion Planning. Our novelty consists of an implementation of the Rapidly exploring Random Trees (RRT) algorithm, more specifically the RRT* algorithm. RRT and RRT* are explained below. 
+GitHub repository for our final project for ME570: Robot Motion Planning. Our novelty consists of an implementation of the Rapidly exploring Random Trees (RRT) algorithm, more specifically the RRT* algorithm, in 2D and in 3D. RRT and RRT* are explained below. 
 
 
 ![2D rrt path planning algorithm run on simple 3-obstacle environment](2D_RRT_figures/RRT_1.png "RRT")
@@ -27,7 +27,7 @@ These two added features enable RRT* to converge faster on an optimal solution, 
 ![3D rrt* path planning algorithm run on table environment](3D_RRTstar_figures/3DRRTstar_25000itrs_Iso2.png "3D RRT*")
 
 
-### Required dependencies:
+### Required packages/software:
 
 #### Python:
 - Matplotlib
